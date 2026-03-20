@@ -11,7 +11,7 @@
 # Pass an experiment number (1-10) to run just that one, or no args for all.
 # =============================================================================
 
-set -euo pipefail
+set -eo pipefail
 
 LOGDIR="../logs/ab_sweep_$(date +%Y%m%d)"
 mkdir -p "$LOGDIR"
@@ -29,6 +29,9 @@ export QAT_INT6=1
 export WARMDOWN_ITERS=3000
 export USE_ZSTD=1
 export EVAL_STRIDE=64
+# Reduce batch for 1×H100: 65536 tokens/step = same per-GPU batch as 8×H100
+# This gives ~8,800 steps in 10 min instead of ~1,100
+export TRAIN_BATCH_TOKENS=65536
 # These are the "best config" defaults — experiments override one at a time
 BASE_MATRIX_LR=0.025
 BASE_SCALAR_LR=0.025
